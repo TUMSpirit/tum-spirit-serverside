@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_DATABASE=mydatabase
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
