@@ -1,4 +1,10 @@
 # Import the libraries
+import pickle
+import numpy as np
+from nltk.collocations import *
+from nltk.tokenize import RegexpTokenizer
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from fastapi import FastAPI, Request, HTTPException
 from transformers import pipeline
 from pydantic import BaseModel
@@ -13,16 +19,10 @@ from textblob import TextBlob
 
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+from sklearn.linear_model import LogisticRegression
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.tokenize import RegexpTokenizer
-from nltk.collocations import *
+nltk.download('punkt')
 
-import numpy as np
-
-import pickle
 
 # Create a FastAPI app
 app = FastAPI()
