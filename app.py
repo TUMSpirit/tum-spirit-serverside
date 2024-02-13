@@ -6,12 +6,13 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from fastapi import FastAPI, Request, HTTPException
-from transformers import pipeline
+
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
-import os
+from openai import OpenAI
+
 
 import textstat
 
@@ -30,14 +31,14 @@ def dummy_fn(x): return x
 
 
 # Retrieve MongoDB credentials and database info
-MONGO_USER = os.environ.get("MONGO_INITDB_ROOT_USERNAME", "root")
-MONGO_PASSWORD = os.environ.get("MONGO_INITDB_ROOT_PASSWORD", "example")
+MONGO_USER = "root"
+MONGO_PASSWORD = "example"
 MONGO_HOST = "mongo"
 MONGO_PORT = "27017"
-MONGO_DB = "mydatabase"
+MONGO_DB = "TUMSpirit"
 
 
-MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
+MONGO_URI = "mongodb://root:example@localhost:27017"
 
 # Connect to MongoDB
 client = MongoClient(MONGO_URI)
@@ -56,6 +57,12 @@ class CustomUnpickler(pickle.Unpickler):
 
 class InputData(BaseModel):
     prompt: str
+
+
+# array of messages
+
+class Messages(BaseModel):
+    messages: list
 
 # Create a class for the output data
 
@@ -98,29 +105,21 @@ class Model():  # Note "Model" represents the Big 5 OCEAN Model. I can't rename 
             return self.rfc.predict_proba(X)
 
 
-# check if the models folder has content in it otherwise install the model
-if len(os.listdir('./models/')) == 0:
+@app.post("/generate")
+def generate(messages: Messages):
 
-    pipe = pipeline("text-generation", model="gpt2")
-    pipe.save_pretrained("./models/")
+    client = OpenAI(
+        base_url='http://localhost:54321/v1',
+        api_key='ollama',  # required, but unused
+    )
 
+    response = client.chat.completions.create(
+        model="llama2",
+        messages=messages.messages
+    )
+    print(response.choices[0].message.content)
 
-# Load a local LLM using Hugging Face Transformers
-model = pipeline("text-generation", model="./models/")
-
-# Create a route for the web application
-
-
-@app.post("/generate", response_model=OutputData)
-def generate(request: Request, input_data: InputData):
-    # Get the prompt from the input data
-    prompt = input_data.prompt
-
-# Generate a response from the local LLM using the prompt
-    response = model(prompt)[0]["generated_text"]
-
-# Return the response as output data
-    return OutputData(response=response)
+    return response
 
 
 @app.get("/")

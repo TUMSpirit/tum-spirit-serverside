@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   app:
     build: .
@@ -18,6 +18,20 @@ services:
       - MONGO_INITDB_DATABASE=mydatabase
     volumes:
       - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports: ["54321:11434"]
+    volumes:
+      - ollama:/root/.ollama
+    pull_policy: always
+    tty: true
+    command: "serve && run llama2"
+    restart: unless-stopped
+    
 volumes:
   mongodb_data:
+  ollama:

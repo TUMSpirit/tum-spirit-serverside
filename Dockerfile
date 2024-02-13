@@ -16,7 +16,6 @@ RUN pip install -r requirements.txt
 
 # Copy the FastAPI app files to the container
 COPY app.py .
-COPY models /app/models
 COPY BigFiveModels /app/BigFiveModel
 COPY MTBIModels /app/MTBIModel
 
