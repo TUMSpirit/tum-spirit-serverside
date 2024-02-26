@@ -6,7 +6,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from fastapi import FastAPI, Request, HTTPException
-
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
@@ -29,6 +29,15 @@ nltk.download('punkt')
 app = FastAPI()
 def dummy_fn(x): return x
 
+
+# CORS middleware with allow_origins set to ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Retrieve MongoDB credentials and database info
 MONGO_USER = "root"
@@ -109,7 +118,7 @@ class Model():  # Note "Model" represents the Big 5 OCEAN Model. I can't rename 
 def generate(messages: Messages):
 
     client = OpenAI(
-        base_url='http://localhost:54321/v1',
+        base_url='http://172.17.0.1:54321/v1',
         api_key='ollama',  # required, but unused
     )
 
