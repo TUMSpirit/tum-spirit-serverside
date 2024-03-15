@@ -23,4 +23,4 @@ COPY MTBIModels /app/MTBIModel
 EXPOSE 8000
 
 # Run Uvicorn 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]
