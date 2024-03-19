@@ -1,15 +1,11 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
 from fastapi import HTTPException
 
 
-class Messages(BaseModel):
-    messages: list[str]
-
-
+# Create a router
 router = APIRouter()
 
 
@@ -29,6 +25,7 @@ db = client[MONGO_DB]
 collection = db['mycollection']
 
 
+# Define a route to insert a record into the database
 @router.get("/db/insert", tags=["db"])
 def insert_record():
     try:
