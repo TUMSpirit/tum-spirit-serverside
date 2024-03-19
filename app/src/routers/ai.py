@@ -4,10 +4,17 @@ from openai import OpenAI
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
+from fastapi import Request
+from typing import List, Optional
 
 
-class Messages(BaseModel):
-    messages: list[str]
+class Message(BaseModel):
+    role: str
+    content: str
+
+
+class MessageList(BaseModel):
+    messages: List[Message]
 
 
 router = APIRouter()
@@ -24,8 +31,8 @@ MONGO_DB = "TUMSpirit"
 MONGO_URI = "mongodb://root:example@localhost:27017"
 
 
-@router.get("/ai/generate", tags=["ai"])
-def generate(messages: Messages):
+@router.post("/ai/generate", tags=["ai"])
+def generate(messages: MessageList):
 
     client = OpenAI(
         base_url='http://172.17.0.1:54321/v1',
