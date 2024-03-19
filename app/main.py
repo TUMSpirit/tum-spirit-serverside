@@ -1,7 +1,11 @@
 from fastapi import Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+
+# import routers
 from .src.routers import ai
+from .src.routers import db
+from .src.routers import language
 
 
 def application_setup() -> FastAPI:
@@ -12,6 +16,8 @@ def application_setup() -> FastAPI:
 
     # Mapping api routes
     application.include_router(ai.router)
+    application.include_router(db.router)
+    application.include_router(language.router)
 
     # Allow cors
     application.add_middleware(

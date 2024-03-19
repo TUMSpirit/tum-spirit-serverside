@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from openai import OpenAI
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
+from fastapi import HTTPException
 
 
 class Messages(BaseModel):
@@ -20,34 +20,16 @@ MONGO_HOST = "mongo"
 MONGO_PORT = "27017"
 MONGO_DB = "TUMSpirit"
 
-
+# connection string
 MONGO_URI = "mongodb://root:example@localhost:27017"
 
-
-@router.get("/ai/generate", tags=["ai"])
-def generate(messages: Messages):
-
-    client = OpenAI(
-        base_url='http://172.17.0.1:54321/v1',
-        api_key='ollama',  # required, but unused
-    )
-
-    response = client.chat.completions.create(
-        model="llama2",
-        messages=messages.messages
-    )
-    print(response.choices[0].message.content)
-
-    return response
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client[MONGO_DB]
+collection = db['mycollection']
 
 
-@router.get("/ai/hello", tags=["ai"])
-def generate():
-
-    return {"message": "Hello World"}
-
-
-@router.post("/insert-record/")
+@router.get("/db/insert", tags=["db"])
 def insert_record():
     try:
         # Create a record with a random ID (ObjectId) and a timestamp
