@@ -17,7 +17,8 @@ MONGO_PORT = "27017"
 MONGO_DB = "TUMSpirit"
 
 # connection string
-MONGO_URI = "mongodb://root:example@localhost:27017"
+MONGO_URI = "mongodb://root:example@129.187.135.9:27017/mydatabase?authSource=admin"
+
 
 # Connect to MongoDB
 client = MongoClient(MONGO_URI)
