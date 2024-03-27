@@ -29,6 +29,7 @@ class MessageList(BaseModel):
 class AnalyticsRecord(BaseModel):
     event_type: str  # The unique identifier of the record
     session_id: str  # The chat session ID
+    data: dict  # Additional data to be stored in the record
 
 
 # Create a FastAPI router object
@@ -92,7 +93,8 @@ def insert_record(event: AnalyticsRecord):
         record = {
             "event_type": event.event_type,
             "session_id": event.session_id,
-            'timestamp': datetime.now(datetime.UTC)
+            'timestamp': datetime.now(datetime.UTC),
+            "data": event.data
         }
         # Inserting the record into the database
         result = collection.insert_one(record)
