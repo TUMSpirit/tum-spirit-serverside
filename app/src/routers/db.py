@@ -33,7 +33,7 @@ def insert_record():
         # Create a record with a random ID (ObjectId) and a timestamp
         record = {
             '_id': ObjectId(),
-            'timestamp': datetime.utcnow()
+            'timestamp': datetime.now()
         }
         # Inserting the record into the database
         result = collection.insert_one(record)
