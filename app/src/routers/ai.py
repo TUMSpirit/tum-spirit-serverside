@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List
 from dotenv import load_dotenv
 import os
-
+from pymongo import MongoClient
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -23,6 +23,12 @@ class Message(BaseModel):
 # Define a BaseModel for representing a list of messages
 class MessageList(BaseModel):
     messages: List[Message]  # A list of Message objects
+
+
+# Define a BaseModel for analytics records
+class AnalyticsRecord(BaseModel):
+    event_type: str  # The unique identifier of the record
+    session_id: str  # The chat session ID
 
 
 # Create a FastAPI router object
@@ -41,8 +47,14 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Construct the MongoDB connection URI
 MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
 
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client[MONGO_DB]
+collection = db['chatbot_analytics']
 
 # Endpoint to generate AI responses using OpenAI
+
+
 @router.post("/ai/generate", tags=["ai"])
 async def generate(messages: MessageList):
 
@@ -72,14 +84,20 @@ async def generate():
     return {"message": "Hello World"}
 
 
-# Endpoint to insert a record into the MongoDB database (**WARNING:** Not implemented)
-@router.post("/insert-record/")
-async def insert_record():
+# Define a route to insert analytics records into the database
+@router.post("/db/analytics", tags=["ai"])
+def insert_record(event: AnalyticsRecord):
     try:
-        # This functionality is currently not implemented
-        # Replace this with your actual logic for connecting to MongoDB and inserting records
-        raise NotImplementedError("Database functionality not implemented yet")
-
+        # Create a record with a random ID (ObjectId) and a timestamp
+        record = {
+            "event_type": event.event_type,
+            "session_id": event.session_id,
+            'timestamp': datetime.now(datetime.UTC)
+        }
+        # Inserting the record into the database
+        result = collection.insert_one(record)
+        # Return the ID of the inserted record
+        return {"id": str(result.inserted_id)}
     except Exception as e:
-        # Handle any exceptions that might occur during database operations
+        # If something goes wrong, raise an HTTP exception
         raise HTTPException(status_code=500, detail=str(e))
