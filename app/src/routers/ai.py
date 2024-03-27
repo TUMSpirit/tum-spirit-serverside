@@ -86,7 +86,7 @@ async def generate():
 
 
 # Define a route to insert analytics records into the database
-@router.post("/db/analytics", tags=["ai"])
+@router.post("/ai/analytics", tags=["ai"])
 def insert_record(event: AnalyticsRecord):
     try:
         # Create a record with a random ID (ObjectId) and a timestamp
