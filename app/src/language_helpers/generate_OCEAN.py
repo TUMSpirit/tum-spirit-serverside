@@ -45,7 +45,7 @@ class Model():  # Note "Model" represents the Big 5 OCEAN Model. I can't rename 
         else:
             return self.rfc.predict_proba(X)
 
-def generate_OCEAN(text):
+def generate_OCEAN(text_array):
     model = Model()
     models = {}
     models['openness'] = CustomUnpickler(
@@ -62,8 +62,6 @@ def generate_OCEAN(text):
     # analysis OCEAN
     predictions = {}
     trait_list = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism']
-
-    text_array = [text]
 
     for trait in trait_list:
         pkl_model = models[trait]

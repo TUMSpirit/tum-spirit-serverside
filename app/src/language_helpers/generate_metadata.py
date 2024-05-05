@@ -6,9 +6,9 @@ from .generate_OCEAN import generate_OCEAN
 from .generate_MTBI import generate_MTBI
 
 
-def generate(text: str):
+def generate_metadata(text: str):
 
-    ocean_result = generate_OCEAN(text)
+    ocean_result = generate_OCEAN([text])
 
     mtbi_result = generate_MTBI(text)
 
